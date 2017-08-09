@@ -5,7 +5,6 @@
 // create a middleware function to catch and handle errors, register it
 // as the last middleware on app
 
-
 // create a route middleware for POST /lions that will increment and
 // add an id to the incoming new lion object on req.body
 
@@ -14,12 +13,15 @@ var bodyParser = require('body-parser');
 var app = express();
 var _ = require('lodash');
 var morgan = require('morgan');
+var db = require('./db')
 
-var lions = [];
-var id = 0;
+var lions = db.lions;
+var id = db.id;
 
 var updateId = function(req, res, next) {
   // fill this out. this is the route middleware for the ids
+  req.body.id = ++id;
+  next()
 };
 
 app.use(morgan('dev'))
@@ -28,9 +30,13 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 
-app.param('id', function(req, res, next, id) {
-  // fill this out to find the lion based off the id
-  // and attach it to req.lion. Rember to call next()
+app.param('id', function(req, res, next, rid) {
+  const requestedLion = lions.find(item => item.id == rid)
+  if (!requestedLion) {
+     next(404)
+  }
+  req.lion = requestedLion
+  next()
 });
 
 app.get('/lions', function(req, res){
@@ -38,8 +44,7 @@ app.get('/lions', function(req, res){
 });
 
 app.get('/lions/:id', function(req, res){
-  // use req.lion
-  res.json(lion || {});
+  res.json(req.lion);
 });
 
 app.post('/lions', updateId, function(req, res) {
@@ -47,7 +52,7 @@ app.post('/lions', updateId, function(req, res) {
 
   lions.push(lion);
 
-  res.json(lion);
+  res.status(201).json(lion);
 });
 
 
@@ -63,6 +68,17 @@ app.put('/lions/:id', function(req, res) {
   } else {
     var updatedLion = _.assign(lions[lion], update);
     res.json(updatedLion);
+  }
+});
+
+app.use((err, req, res, next) => {
+  switch (err) {
+    case 404:
+      res.status(404).send({message:'Lion not found'})
+      break;
+    default:
+      res.status(401).send({message:'Wrong request, no idea wat you want.'})
+      break;
   }
 });
 
