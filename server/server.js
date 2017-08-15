@@ -9,6 +9,7 @@ var morgan = require('morgan');
 var lionRouter = require('./lions');
 var tigerRouter = require('./tigers');
 
+
 app.use(morgan('dev'))
 app.use(express.static('client'));
 app.use(bodyParser.urlencoded({extended: true}));
@@ -17,9 +18,16 @@ app.use(bodyParser.json());
 // '/lion' we want to use this router
 app.use('/lions', lionRouter);
 
+app.use('/tigers', tigerRouter);
+
 app.use(function(err, req, res, next) {
-  if (err) {
-    res.status(500).send(error);
+  switch (err) {
+    case 404:
+      res.status(404).send({message: 'Item not found'});
+      break;
+    default:
+      res.status(500).send(err);
+      break;
   }
 });
 

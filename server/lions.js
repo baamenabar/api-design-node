@@ -1,7 +1,8 @@
 var lionRouter = require('express').Router();
 
-var lions = [];
-var id = 0;
+let db = require('./db')
+var lions = db.lions;
+var id = db.id;
 
 var updateId = function(req, res, next) {
   if (!req.body.id) {
@@ -12,10 +13,10 @@ var updateId = function(req, res, next) {
 };
 
 lionRouter.param('id', function(req, res, next, id) {
-  var todo = _.find(todos, {id: id});
+  var lion = _.find(lions, {id: id});
 
-  if (todo) {
-    req.todo = todo;
+  if (lion) {
+    req.lion = lion;
     next();
   } else {
     res.send();
