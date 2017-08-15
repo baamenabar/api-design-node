@@ -19,7 +19,7 @@ lionRouter.param('id', function(req, res, next, id) {
     req.lion = lion;
     next();
   } else {
-    res.send();
+    res.status(404).send({});
   }
 });
 
@@ -29,7 +29,7 @@ lionRouter.get('/', function(req, res){
 
 lionRouter.get('/:id', function(req, res){
   var lion = req.lion;
-  res.json(lion || {});
+  res.json(lion);
 });
 
 lionRouter.post('/', updateId, function(req, res) {
@@ -37,7 +37,7 @@ lionRouter.post('/', updateId, function(req, res) {
 
   lions.push(lion);
 
-  res.json(lion);
+  res.status(201).json(lion);
 });
 
 lionRouter.delete('/:id', function(req, res) {
