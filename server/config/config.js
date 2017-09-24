@@ -1,7 +1,7 @@
-var _ = require('lodash');
+const deepmerge = require('deepmerge');
 
 // deafult config object for our api
-var config = {
+const config = {
   /* just placing the name of our possible NODE_ENV values for later*/
   dev: 'development',
   test: 'testing',
@@ -12,7 +12,7 @@ var config = {
 // check to see if the NODE_ENV was set, if not, the set it to dev
 process.env.NODE_ENV = process.env.NODE_ENV || config.dev;
 // set config.env to whatever the NODE_ENV is
-config.env = process.env.NODE_ENV;
+config.env = process.env.NODE_ENV || config.dev;
 // TODO
 // envConfig is nothing right now, but it should be an object.
 // depending on what ever config.env is, load up the appropriate file
@@ -21,6 +21,6 @@ config.env = process.env.NODE_ENV;
 // conditionally load in another config file depending on what
 // env we are in. We then merge those objects with the env config overriting
 // the default config if here. We then export that new object for our app to use
-var envConfig;
+const envConfig = require('./' + config.env);
 
-module.exports = _.merge(config, envConfig);
+module.exports = deepmerge(config, envConfig);

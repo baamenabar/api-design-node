@@ -7,7 +7,18 @@ require('./middleware/appMiddlware')(app);
 
 // setup the api
 app.use('/api/', api);
-// set up global error handling
+
+// error response
+app.use((err, req, res, next) => {
+  switch (err) {
+    case 404:
+      res.status(404).send({message: 'Item not found'});
+      break;
+    default:
+      res.status(500).send(err);
+      break;
+  }
+});
 
 // export the app for testing
 module.exports = app;
