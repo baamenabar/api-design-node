@@ -3,7 +3,7 @@ const logger = require('../../util/logger')
 
 const resources = [{
   id: 1,
-  name: 'code-blog',
+  name: 'Code',
 }]
 
 let idCount = 1;
