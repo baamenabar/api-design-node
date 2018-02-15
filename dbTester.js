@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 
+mongoose.connect('mongodb://localhost/todoapp');
 // connect to a database so the below will work.
 // what's happening is that we're createing a new schema
 // and making a todos collection and a Todo model.
